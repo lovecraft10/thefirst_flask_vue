@@ -1,0 +1,3 @@
+# thefirst_flask_vue
+第一次做flask+vue的一个小的项目，自己使用了echarts画图。
+里面需要把连接clickhouse的去掉，改为部分改成连接mysql的
