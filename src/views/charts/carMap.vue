@@ -1,8 +1,8 @@
 <template>
   <section>
     <div style="margin-bottom: 20px;">
-      <el-input v-model="input" placeholder="请输入vin号" size="medium"></el-input>
-      <el-button size="big" @click="addTab()">
+      <el-input v-model="filters.vin" placeholder="请输入vin号" size="medium"></el-input>
+      <el-button size="big" @click="getMap()">
        绘制热力图
       </el-button>
     </div>
@@ -33,6 +33,9 @@ export default {
   name: "carMap",
   data() {
     return{
+      filters: {
+        vin: ""
+      },
       editableTabsValue: '1',
       editableTabs: [{
           title: '',
@@ -45,9 +48,12 @@ export default {
   },
   methods: {
     // 增加标签页
-    addTab() {
+    getMap() {
         let newTabName = ++this.tabIndex + '';
-        getCarMap().then(res =>{
+        let para = {
+          vin: this.filters.vin
+        };
+        getCarMap(para).then(res =>{
         this.html = res.data;
         });
         this.editableTabs.push({
@@ -81,7 +87,7 @@ export default {
     // }
   },
   mounted() {
-    this.addTab()
+    this.getMap()
   }
 }
 </script>

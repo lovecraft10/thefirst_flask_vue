@@ -52,6 +52,6 @@ export const TIMEandFUEL = params => {
 };
 
 export const getCarMap= params => {
-    return axios.get(`${base}/getCarMap`);
+    return axios.get(`${base}/getCarMap`, { params: params });
 };
 

@@ -92,6 +92,3 @@ class Map(Base):
     eng_spd = Column(types.Float64)
     tripId = Column(types.Int16)
 
-
-
-

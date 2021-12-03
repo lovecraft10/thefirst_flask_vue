@@ -211,7 +211,6 @@ export default {
     },
     drawCharts() {
       this.drawLineChart();
-      // this.drawPieChart();
       this.drawPieChart1();
     }
   },

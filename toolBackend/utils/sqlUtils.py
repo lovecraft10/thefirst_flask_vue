@@ -38,5 +38,3 @@ def timeTOfuel():
     df['reportTime'] = pd.to_datetime(df['reportTime'])
 
     return df
-
-timeTOfuel()

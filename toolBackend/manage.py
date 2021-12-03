@@ -3,6 +3,8 @@
 import os
 import re
 import json
+import numpy as np
+import pandas as pd
 from flask import Flask, g, jsonify, make_response, request
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
@@ -10,7 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData
 from clickhouse_sqlalchemy import make_session, get_declarative_base
 
-from toolBackend.entiy.carCollection import Doors, Trip
+from toolBackend.entiy.carCollection import Doors, Trip, Map
 from toolBackend.entiy.Admin import Admin, JoinInfos, Fuel
 
 # from toolBackend.utils.clickhouseUtil import carMap
@@ -37,22 +39,22 @@ auth = HTTPBasicAuth()
 CSRF_ENABLED = True
 app.debug = True
 
-'''
-clickhouse连接配置
-'''
-conf = {
-    "user": "default",
-    "password": "Abc123456!",
-    "host": "10.255.128.201",
-    "port": "8123",
-    "db": "default"
-}
-connection = 'clickhouse://{user}:{password}@{host}:{port}/{db}'.format(**conf)
-engine = create_engine(connection)
-session = make_session(engine)
-metadata = MetaData(bind=engine)
-Base = get_declarative_base(metadata=metadata)
-
+# '''
+# clickhouse连接配置
+# '''
+# conf = {
+#     "user": "default",
+#     "password": "Abc123456!",
+#     "host": "10.255.128.201",
+#     "port": "8123",
+#     "db": "default"
+# }
+# connection = 'clickhouse://{user}:{password}@{host}:{port}/{db}'.format(**conf)
+# engine = create_engine(connection)
+# session = make_session(engine)
+# metadata = MetaData(bind=engine)
+# Base = get_declarative_base(metadata=metadata)
+#
 
 
 
@@ -244,7 +246,7 @@ def getdrawPieChart():
 @auth.login_required
 def getdrawPieChart1():
     data_value = [0, 0, 0, 0]  # 和下面组别一一对应
-    for driverD, passengerD, rrD, rlD in session.query(Doors.driverD, Doors.passengerD, Doors.rrD, Doors.rlD):
+    for driverD, passengerD, rrD, rlD in db.session.query(Doors.driverD, Doors.passengerD, Doors.rrD, Doors.rlD):
         data_value[0] = data_value[0] + driverD
         data_value[1] = data_value[1] + passengerD
         data_value[2] = data_value[2] + rrD
@@ -282,25 +284,25 @@ def getdrawLineChart():
     return jsonify({'code': 200, 'profess_value': profess_value, 'grade_value': grade_value, 'grade_data': grade_data})
 
 
-# @app.route('/api/getdrawLineChart1', methods=['GET'])
-# @auth.login_required
-# def getdrawLineChart1():
-#     fuel_value = []  # 年级汇总
-#     time_value = []  # 学院汇总
-#     time_fuel = {}  # 年级各学院字典
-#     query = db.session.query
-#     Fuels = query(Fuel)
-#     for fuel in Fuels:
-#         time_value.append(fuel.reportTime)
-#         time_fuel[fuel.reportTime] = []
-#         fuel_value.append(fuel.IP_AvgFuelCons)
-#
-#     for time in time_value:
-#         for fuel in fuel_value:
-#             time_fuel[time].append(fuel)
-#     print(fuel_value)
-#     print(time_value)
-#     return jsonify({'code': 200, 'fuel_value': fuel_value, 'time_value': time_value, 'time_fuel': time_fuel})
+@app.route('/api/getdrawLineChart1', methods=['GET'])
+@auth.login_required
+def getdrawLineChart1():
+    fuel_value = []  # 年级汇总
+    time_value = []  # 学院汇总
+    time_fuel = {}  # 年级各学院字典
+    query = db.session.query
+    Fuels = query(Fuel)
+    for fuel in Fuels:
+        time_value.append(fuel.reportTime)
+        time_fuel[fuel.reportTime] = []
+        fuel_value.append(fuel.IP_AvgFuelCons)
+
+    for time in time_value:
+        for fuel in fuel_value:
+            time_fuel[time].append(fuel)
+    print(fuel_value)
+    print(time_value)
+    return jsonify({'code': 200, 'fuel_value': fuel_value, 'time_value': time_value, 'time_fuel': time_fuel})
 
 
 @app.route('/api/getTimeandFuel', methods=['GET'])
@@ -350,16 +352,31 @@ def getTimeandFuel():
 def unauthorized():
     return make_response(jsonify({'error': 'Unauthorized access'}), 401)
 
-#
-# @app.route('/api/getCarMap', methods=['GET'])
-# @auth.login_required
-# def getCarMap():
-#     # carvin = request.args.get('carVin', '')
-#     df1 = carMap()
-#     df2 = df1[['lat', 'lon']]
-#     folium_map = folium.Map([22.60205, 114.11663], tiles='OpenStreetMap', zoom_start=12)
-#     HeatMap(df2).add_to(folium_map)
-#     return folium_map._repr_html_()
+
+@app.route('/api/getCarMap', methods=['GET'])
+@auth.login_required
+def getCarMap():
+    query = db.session.query
+    vin = request.args.get('vin', '')
+    if vin:
+        list1 = query(Map).filter(Map.vin.like('%{}%'.format(vin)))
+    else:
+        list1 = query(Map)
+    list1 = list1.all()
+    lat = []
+    lon = []
+    for map in list1:
+        lat.append(map.lat)
+        lon.append(map.lon)
+    data = pd.DataFrame(columns=['lat', 'lon'])
+    data['lat'] = lat
+    data['lon'] = lon
+    data1 = np.array(data)
+    print(data1[0])
+    folium_map = folium.Map(data1[0], tiles='OpenStreetMap', zoom_start=12)
+    HeatMap(data1).add_to(folium_map)
+    return folium_map._repr_html_()
+
 
 
 if __name__ == '__main__':
