@@ -12,7 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData
 from clickhouse_sqlalchemy import make_session, get_declarative_base
 
-from toolBackend.entiy.carCollection import Doors, Trip, Map
+from toolBackend.entiy.carCollection import Doors, Trip, Map, StandingBook
 from toolBackend.entiy.Admin import Admin, JoinInfos, Fuel
 
 # from toolBackend.utils.clickhouseUtil import carMap
@@ -39,6 +39,24 @@ auth = HTTPBasicAuth()
 CSRF_ENABLED = True
 app.debug = True
 
+
+'''
+mysql的连接配置
+'''
+conf1 = {
+    "user": "root",
+    "password": "123456",
+    "host": "localhost",
+    "port": "3306",
+    "db": "car"
+}
+connection = 'mysql+pymysql://{user}:{password}@{host}:{port}/{db}'.format(**conf1)
+engine = create_engine(connection)
+session = make_session(engine)
+metadata = MetaData(bind=engine)
+Base = get_declarative_base(metadata=metadata)
+
+
 # '''
 # clickhouse连接配置
 # '''
@@ -55,8 +73,6 @@ app.debug = True
 # metadata = MetaData(bind=engine)
 # Base = get_declarative_base(metadata=metadata)
 #
-
-
 
 
 # @app.route("/joinus", methods=['POST'])
@@ -140,6 +156,7 @@ def get_user_list():
     })
 
 
+# 车门表单
 @app.route('/api/users/doorpage', methods=['GET'])
 @auth.login_required
 def get_door_list():
@@ -166,6 +183,7 @@ def get_door_list():
     })
 
 
+# 行程表单
 @app.route('/api/users/trippage', methods=['GET'])
 def get_trip_list():
     page_size = 60
@@ -242,6 +260,7 @@ def getdrawPieChart():
     return jsonify({'code': 200, 'value': data_value1, 'total': total1})
 
 
+# 四个车门的饼图
 @app.route('/api/getdrawPieChart1', methods=['GET'])
 @auth.login_required
 def getdrawPieChart1():
@@ -287,9 +306,9 @@ def getdrawLineChart():
 @app.route('/api/getdrawLineChart1', methods=['GET'])
 @auth.login_required
 def getdrawLineChart1():
-    fuel_value = []  # 年级汇总
-    time_value = []  # 学院汇总
-    time_fuel = {}  # 年级各学院字典
+    fuel_value = []
+    time_value = []
+    time_fuel = {}
     query = db.session.query
     Fuels = query(Fuel)
     for fuel in Fuels:
@@ -305,6 +324,7 @@ def getdrawLineChart1():
     return jsonify({'code': 200, 'fuel_value': fuel_value, 'time_value': time_value, 'time_fuel': time_fuel})
 
 
+# 与油耗相关的两个元素一起的折线图
 @app.route('/api/getTimeandFuel', methods=['GET'])
 @auth.login_required
 def getTimeandFuel():
@@ -353,6 +373,7 @@ def unauthorized():
     return make_response(jsonify({'error': 'Unauthorized access'}), 401)
 
 
+# 车辆位置热力图
 @app.route('/api/getCarMap', methods=['GET'])
 @auth.login_required
 def getCarMap():
@@ -377,6 +398,52 @@ def getCarMap():
     HeatMap(data1).add_to(folium_map)
     return folium_map._repr_html_()
 
+
+# @app.route('/api/users/doorpage', methods=['GET'])
+# @auth.login_required
+# def get_door_list():
+#     page_size = 20
+#     page = request.args.get('page', 1, type=int)
+#     vin = request.args.get('vin', '')
+#     query1 = db.session.query
+#     if vin:
+#         carDoors = query1(Doors).filter(
+#             Doors.vin.like('%{}%'.format(vin))
+#         )
+#     else:
+#         carDoors = query1(Doors)
+#     total = carDoors.count()
+#     if not page:
+#         carDoors = carDoors.all()
+#     else:
+#         carDoors = carDoors.offset((page - 1) * page_size).limit(page_size).all()
+#     return jsonify({
+#         'code': 200,
+#         'total': total,
+#         'page_size': page_size,
+#         'infos': [u.to_dict() for u in carDoors]
+#     })
+
+# 借用列表
+@app.route('/api/getBook', methods=['GET'])
+def getStandingBook():
+    # 映射类查询方式
+    page_size = 20
+    page = request.args.get('page', 1, type=int)
+    operator = request.args.get('operator', '')
+    query = session.query
+    if operator:
+        Infos = query(StandingBook).filter(
+            StandingBook.operator.like('%{}%'.format(operator))
+        )
+    else:
+        Infos = query(StandingBook)
+    total = Infos.count()
+    if not page:
+        Infos = Infos.all()
+    else:
+        Infos = Infos.offset((page - 1) * page_size).limit(page_size).all()
+    return jsonify({'code': 200, 'total': total, 'info': [u.to_dict() for u in Infos]})
 
 
 if __name__ == '__main__':

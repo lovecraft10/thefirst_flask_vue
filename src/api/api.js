@@ -55,3 +55,7 @@ export const getCarMap= params => {
     return axios.get(`${base}/getCarMap`, { params: params });
 };
 
+export const getBook= params => {
+    return axios.get(`${base}/getBook`, { params: params });
+};
+

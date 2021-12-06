@@ -7,6 +7,7 @@ import Trip from './views/nav1/Trip.vue'
 import echarts from './views/charts/echarts.vue'
 import Index from './views/nav1/Index.vue'
 import CarMap from './views/charts/carMap.vue'
+import Standing from "./views/nav1/Standing";
 
 
 let routes = [
@@ -61,6 +62,16 @@ let routes = [
         iconCls: 'fa fa-bar-chart',
         children: [
             { path: '/trip', component: Trip, name: '行程划分统计' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: 'Standing',
+        leaf: true,
+        iconCls: 'fa fa-bar-chart',
+        children: [
+            { path: '/standing', component: Standing, name: '借用台账' }
         ]
     },
     {
