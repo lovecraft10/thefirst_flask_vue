@@ -47,33 +47,36 @@ let routes = [
     {
         path: '/',
         component: Home,
-        name: 'Door',
-        leaf: true,
+        name: '分析相关',
+        leaf: false,
         iconCls: 'fa fa-bar-chart',
         children: [
-            { path: '/door', component: Door, name: '车门开关次数' }
-        ]
-    },
-    {
-        path: '/',
-        component: Home,
-        name: 'Trip',
-        leaf: true,
-        iconCls: 'fa fa-bar-chart',
-        children: [
-            { path: '/trip', component: Trip, name: '行程划分统计' }
-        ]
-    },
-    {
-        path: '/',
-        component: Home,
-        name: 'Standing',
-        leaf: true,
-        iconCls: 'fa fa-bar-chart',
-        children: [
+            { path: '/door', component: Door, name: '车门开关次数' },
+            { path: '/trip', component: Trip, name: '行程划分统计' },
             { path: '/standing', component: Standing, name: '借用台账' }
+
         ]
     },
+    // {
+    //     path: '/',
+    //     component: Home,
+    //     name: 'Trip',
+    //     leaf: true,
+    //     iconCls: 'fa fa-bar-chart',
+    //     children: [
+    //         { path: '/trip', component: Trip, name: '行程划分统计' }
+    //     ]
+    // },
+    // {
+    //     path: '/',
+    //     component: Home,
+    //     name: 'Standing',
+    //     leaf: true,
+    //     iconCls: 'fa fa-bar-chart',
+    //     children: [
+    //         { path: '/standing', component: Standing, name: '借用台账' }
+    //     ]
+    // },
     {
         path: '/',
         component: Home,

@@ -36,12 +36,12 @@
 			</el-table-column>
 			<el-table-column prop="give_back" label="是否归还" width="120" sortable>
 			</el-table-column>
-<!--			<el-table-column label="操作" width="150">-->
-<!--				<template scope="scope">-->
-<!--					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">详情</el-button>-->
-<!--					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
-<!--				</template>-->
-<!--			</el-table-column>-->
+			<el-table-column label="操作" width="150">
+				<template scope="scope">
+					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">详情</el-button>
+					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+				</template>
+			</el-table-column>
 		</el-table>
 
 		<!--工具条-->
@@ -51,56 +51,56 @@
 			</el-pagination>
 		</el-col>
 
-<!--		&lt;!&ndash;详情界面&ndash;&gt;-->
-<!--		<el-dialog title="详情" v-model="detailFormVisible" :close-on-click-modal="false">-->
-<!--			<el-form :model="detailForm" label-width="80px" :rules="detailFormRules" ref="detailForm">-->
-<!--        <el-form-item label="姓名" prop="name">-->
-<!--							<el-input v-model="detailForm.name" auto-complete="off"></el-input>-->
-<!--						</el-form-item>-->
-<!--				<el-row>-->
-<!--            <el-col :span="12">-->
-<!--  						<el-form-item label="学院">-->
-<!--							<el-input v-model="detailForm.profess"></el-input>-->
-<!--						</el-form-item>-->
-<!--  					</el-col>-->
-<!--  					<el-col :span="12">-->
-<!--  						<el-form-item label="年级">-->
-<!--							<el-input v-model="detailForm.grade"></el-input>-->
-<!--						</el-form-item>-->
-<!--  					</el-col>-->
-<!--				</el-row>-->
-<!--				<el-row>-->
-<!--  					<el-col :span="12">-->
-<!--  						<el-form-item label="电话">-->
-<!--							<el-input v-model="detailForm.phone"></el-input>-->
-<!--						</el-form-item>-->
-<!--  					</el-col>-->
-<!--  					<el-col :span="12">-->
-<!--  						<el-form-item label="邮箱">-->
-<!--							<el-input v-model="detailForm.email"></el-input>-->
-<!--						</el-form-item>-->
-<!--  					</el-col>-->
-<!--				</el-row>-->
-<!--				<el-row>-->
-<!--  					<el-col :span="12">-->
-<!--  						<el-form-item label="组别">-->
-<!--							<el-input v-model="detailForm.group"></el-input>-->
-<!--						</el-form-item>-->
-<!--  					</el-col>-->
-<!--  					<el-col :span="12">-->
-<!--  						<el-form-item label="日期">-->
-<!--  							<el-date-picker type="datetime" placeholder="日期" v-model="detailForm.pub_date"></el-date-picker>-->
-<!--						</el-form-item>-->
-<!--  					</el-col>-->
-<!--				</el-row>-->
+		<!--详情界面-->
+		<el-dialog title="详情" v-model="detailFormVisible" :close-on-click-modal="false">
+			<el-form :model="detailForm" label-width="80px" :rules="detailFormRules" ref="detailForm">
+        <el-form-item label="姓名" prop="name">
+							<el-input v-model="detailForm.cyy" auto-complete="off"></el-input>
+						</el-form-item>
+				<el-row>
+            <el-col :span="12">
+  						<el-form-item label="学院">
+							<el-input v-model="detailForm.depart"></el-input>
+						</el-form-item>
+  					</el-col>
+  					<el-col :span="12">
+  						<el-form-item label="年级">
+							<el-input v-model="detailForm.operator"></el-input>
+						</el-form-item>
+  					</el-col>
+				</el-row>
+				<el-row>
+  					<el-col :span="12">
+  						<el-form-item label="电话">
+							<el-input v-model="detailForm.mobile_phone"></el-input>
+						</el-form-item>
+  					</el-col>
+  					<el-col :span="12">
+  						<el-form-item label="邮箱">
+							<el-input v-model="detailForm.give_back"></el-input>
+						</el-form-item>
+  					</el-col>
+				</el-row>
+				<el-row>
+  					<el-col :span="12">
+  						<el-form-item label="开始日期">
+  							<el-date-picker type="datetime" placeholder="开始日期" v-model="detailForm.begin_date"></el-date-picker>
+						</el-form-item>
+  					</el-col>
+  					<el-col :span="12">
+  						<el-form-item label="结束日期">
+  							<el-date-picker type="datetime" placeholder="结束日期" v-model="detailForm.end_date"></el-date-picker>
+						</el-form-item>
+  					</el-col>
+				</el-row>
 <!--				<el-form-item label="能力期待">-->
 <!--					<el-input type="textarea" v-model="detailForm.power"></el-input>-->
 <!--				</el-form-item>-->
-<!--			</el-form>-->
-<!--			<div slot="footer" class="dialog-footer">-->
-<!--				<el-button @click.native="detailFormVisible = false">返回</el-button>-->
-<!--			</div>-->
-<!--		</el-dialog>-->
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="detailFormVisible = false">返回</el-button>
+			</div>
+		</el-dialog>
 	</section>
 </template>
 
@@ -128,15 +128,12 @@ export default {
       },
       //详情界面数据
       detailForm: {
-        id: 0,
-        name: "",
-        profess: "",
-        grade: 0,
-        phone: 0,
-        email: "",
-        group: "",
-        pub_data: "",
-        power: ""
+        cyy: "",
+        depart: "",
+        operator: "",
+        mobile_phone: "",
+        begin_date: "",
+        end_date: "",
       }
     };
   },
